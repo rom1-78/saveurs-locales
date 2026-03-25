@@ -1,0 +1,58 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, dev, test]
+  pull_request:
+    branches: [main, dev, test]
+
+jobs:
+  # Job 1 : Style du code (ESLint)
+  quality:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm ci
+      - run: npm run lint
+
+  # Job 2 : Tests multi-versions
+  test:
+    name: Test (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    needs: quality
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm ci
+      - run: npm test
+        env:
+          NODE_ENV: test
+
+  # Job 3 : Build de l'application
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/saveurs_locales?schema=public"
+          NEXTAUTH_URL: "http://localhost:3000"
+          NEXTAUTH_SECRET: "ci-test-secret"
