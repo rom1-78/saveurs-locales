@@ -1,5 +1,8 @@
 # Saveurs Locales
 
+![CI Pipeline](https://github.com/rom1-78/saveurs-locales/actions/workflows/ci.yml/badge.svg?branch=dev)
+![CD Pipeline](https://github.com/rom1-78/saveurs-locales/actions/workflows/cd.yml/badge.svg)
+
 Marketplace e-commerce locale connectant des producteurs (fermiers, artisans) directement avec des consommateurs. Construite avec Next.js 14, PostgreSQL, Stripe et NextAuth.
 
 ## Stack technique
@@ -103,6 +106,8 @@ L'application tourne sur **http://localhost:3000**.
 | `npm run build` | `next build` | Build de production |
 | `npm run start` | `next start` | Serveur de production |
 | `npm run lint` | `next lint` | Linter ESLint |
+| `npm test` | `jest` | Lancer les tests |
+| `npm run test:coverage` | `jest --coverage` | Tests avec couverture |
 | `npm run db:generate` | `prisma generate` | Generer le client Prisma |
 | `npm run db:migrate` | `prisma migrate dev` | Appliquer les migrations |
 | `npm run db:push` | `prisma db push` | Push schema sans migration |
@@ -241,3 +246,23 @@ Copiez le `whsec_...` affiche dans votre `.env` comme `STRIPE_WEBHOOK_SECRET`.
 - **Role** : `CLIENT`, `PRODUCTEUR`, `ADMIN`
 - **OrderStatus** : `PENDING`, `CONFIRMED`, `PROCESSING`, `SHIPPED`, `DELIVERED`, `CANCELLED`
 - **PaymentStatus** : `PENDING`, `PAID`, `FAILED`, `REFUNDED`
+
+## Docker
+
+```bash
+# Lancer avec Docker Compose (app + PostgreSQL)
+docker compose up -d
+
+# Voir les logs
+docker compose logs -f
+
+# Arreter
+docker compose down
+```
+
+## DevOps
+
+- **CI** : Lint + Test (Node 18/20/22) + Build (GitHub Actions)
+- **CD** : Deploy staging (branche `test`) + production (branche `main`)
+- **Branches** : `main` (prod) / `test` (staging) / `dev` (dev) / `feature/*`
+- **Health check** : `GET /api/health`
