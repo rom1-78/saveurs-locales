@@ -13,23 +13,17 @@ jobs:
     environment: staging
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "npm"
-      - run: npm ci
-      - run: npm run build
-        env:
-          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/saveurs_locales' }}
-          NEXTAUTH_URL: ${{ secrets.STAGING_NEXTAUTH_URL || 'http://localhost:3000' }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'placeholder-secret' }}
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY || 'sk_test_placeholder' }}
-          STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder' }}
-          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET || 'whsec_placeholder' }}
       - name: Deploy to staging
-        run: echo "Deploy to staging server via SSH or Docker"
-        # Remplacer par la vraie commande de deploy :
-        # ssh user@${{ secrets.STAGING_HOST }} "cd /var/www && git pull && npm ci && pm2 restart"
+        run: |
+          echo "Staging deployment triggered"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          # Quand le serveur staging sera prêt, décommenter :
+          # ssh user@$STAGING_HOST "cd /var/www && git pull && npm ci && npm run build && pm2 restart"
+          # OU avec Docker :
+          # ssh user@$STAGING_HOST "docker compose pull && docker compose up -d"
+        # env:
+        #   STAGING_HOST: ${{ secrets.STAGING_HOST }}
 
   # Deploy vers production (branche main)
   deploy-production:
@@ -39,23 +33,19 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "npm"
-      - run: npm ci
-      - run: npm run build
-        env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/saveurs_locales' }}
-          NEXTAUTH_URL: ${{ secrets.PROD_NEXTAUTH_URL || 'http://localhost:3000' }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'placeholder-secret' }}
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY || 'sk_test_placeholder' }}
-          STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder' }}
-          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET || 'whsec_placeholder' }}
       - name: Deploy to production
-        run: echo "Deploy to production server via SSH or Docker"
-        # Remplacer par la vraie commande de deploy :
-        # ssh user@${{ secrets.PROD_HOST }} "cd /var/www && git pull && npm ci && pm2 restart"
+        run: |
+          echo "Production deployment triggered"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          # Quand le serveur prod sera prêt, décommenter :
+          # ssh user@$PROD_HOST "cd /var/www && git pull && npm ci && npm run build && pm2 restart"
+          # OU avec Docker :
+          # ssh user@$PROD_HOST "docker compose pull && docker compose up -d"
+        # env:
+        #   PROD_HOST: ${{ secrets.PROD_HOST }}
       - name: Health check
-        run: echo "Health check placeholder - configure with real URL"
-        # Remplacer par : curl -f ${{ secrets.PROD_NEXTAUTH_URL }}/api/health || exit 1
+        run: |
+          echo "Health check placeholder"
+          # Quand le serveur sera prêt :
+          # curl -f ${{ secrets.PROD_URL }}/api/health || exit 1
