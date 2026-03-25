@@ -73,3 +73,6 @@ jobs:
           DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/saveurs_locales?schema=public"
           NEXTAUTH_URL: "http://localhost:3000"
           NEXTAUTH_SECRET: "ci-test-secret"
+          STRIPE_SECRET_KEY: "sk_test_placeholder"
+          STRIPE_PUBLISHABLE_KEY: "pk_test_placeholder"
+          STRIPE_WEBHOOK_SECRET: "whsec_placeholder"
